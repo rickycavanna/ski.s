@@ -4,13 +4,42 @@
 #'     DO NOT REMOVE.
 #' @import shiny
 #' @noRd
+#'
+library(shinydashboard)
+
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic
-    fluidPage(
-      h1("ski.stuff")
+    dashboardPage(
+      dashboardHeader(title = "Ski Info", titleWidth = 150),
+      dashboardSidebar(
+        width = 150,
+        sidebarMenu(
+          menuItem("Filter Resorts", tabName = "fltr"),
+          menuItem("Resort Map", tabName = "map"),
+          menuItem("Resort Weather", tabName = "weather")
+        )
+      ),
+      dashboardBody(
+        tabItems(
+          #filters
+          tabItem(tabName = "fltr", fluidPage(
+            mod_filters_ui("filters_1")
+          )),
+
+          #maps
+          tabItem(tabName = "map", fluidPage(
+            mod_map_ui("map_1")
+          )),
+
+          #weather
+          tabItem(tabName = "weather", fluidPage(
+            mod_weather_ui("weather_1")
+          ))
+        )
+      )
     )
   )
 }
@@ -39,3 +68,4 @@ golem_add_external_resources <- function() {
     # for example, you can add shinyalert::useShinyalert()
   )
 }
+

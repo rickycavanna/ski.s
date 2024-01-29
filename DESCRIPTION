@@ -1,13 +1,19 @@
 Package: ski.stuff
 Title: Ski_resort_info
 Version: 0.0.0.9000
-Authors@R: person('Eric', 'Cavanna', email = 'ecavanna@outlook.com', role = c('cre', 'aut'))
-Description: This is to help skiiers evaluate the best resort to ski at on any individual day.
+Authors@R: 
+    person("Eric", "Cavanna", , "ecavanna@outlook.com", role = c("cre", "aut"))
+Description: This is to help skiiers evaluate the best resort to ski at on
+    any individual day.
 License: MIT + file LICENSE
 Imports: 
     config (>= 0.3.2),
     golem (>= 0.4.1),
-    shiny (>= 1.8.0)
+    shiny (>= 1.8.0),
+    shinydashboard
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
+Suggests: 
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
