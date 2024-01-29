@@ -6,6 +6,7 @@
 #' @noRd
 #'
 library(shinydashboard)
+library(dplyr)
 
 app_ui <- function(request) {
   tagList(
