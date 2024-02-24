@@ -7,6 +7,8 @@
 #'
 library(shinydashboard)
 library(dplyr)
+library(DT)
+
 
 app_ui <- function(request) {
   tagList(

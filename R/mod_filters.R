@@ -20,8 +20,9 @@ mod_filters_ui <- function(id){
                checkboxGroupInput(ns('pass'),label = 'Select Pass', choices = c('n.a')),
                selectizeInput(ns('state'), label = 'Select State', choices = c('n.a'),
                               multiple = TRUE,
-                              options = list(placeholder = 'select a state name')),
-               dataTableOutput(ns('table'))
+                              options = list(placeholder = 'select a state name'))),
+        column(9,
+          DT::dataTableOutput(ns('table'))
         )
       )
     )
@@ -36,29 +37,48 @@ mod_filters_server <- function(id, dataIN){
     ns <- session$ns
 
     observe({
-      updateCheckboxGroupInput(session,'region',label = 'Select Regions', choices = sort(unique(dataIN$Region),))
+      updateCheckboxGroupInput(session,'region',label = 'Select Regions',
+                               choices = sort(unique(dataIN$Region)),
+                               selected = sort(unique(dataIN$Region)))
     })
 
     observe({
-      updateCheckboxGroupInput(session,'pass',label = 'Select Pass', choices = sort(unique(dataIN$Group),))
+      updateCheckboxGroupInput(session, 'pass', label = 'Select Pass',
+                               choices = sort(unique(dataIN$Group)),
+                               selected = sort(unique(dataIN$Group)))
     })
-    #
-    # observe({
-    #   updateCheckboxGroupInput(session,'state',label = 'Select States', choices = sort(unique(dataIN$State),))
-    # })
 
     observe({
-      updateSelectizeInput(session, 'state', label = 'Select States', choices = sort(unique(dataIN$State),))
+      updateSelectizeInput(session, 'state', label = 'Select States',
+                           choices = sort(unique(dataIN$State),))
     })
 
     filtered_data <- reactive({
-      dataIN %>% filter(Region %in% input$region) %>% filter(Group %in% input$pass)
+      if (length(input$state) > 0) {
+        dataIN %>%
+          filter(Region %in% input$region) %>%
+          filter(Group %in% input$pass) %>%
+          filter(State %in% input$state)
+      } else {
+        dataIN %>%
+          filter(Region %in% input$region) %>%
+          filter(Group %in% input$pass)
+      }
     })
 
-    output$table <- renderDataTable({
-      filtered_data()
-    })
+    #specifies the cols to keep
+    column_order <- c("Resort", "Region", "Group", "State")
 
+    output$table <- DT::renderDataTable({
+      filtered_data() %>% select(column_order)},
+      rownames = F,
+      options = list(
+        filter = FALSE,
+        paging = FALSE,
+        ordering = FALSE,
+        scrollY = "400px"
+        ),
+      )
   })
 }
 
