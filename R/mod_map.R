@@ -13,13 +13,8 @@ mod_map_ui <- function(id){
     #useShinyjs(),
     titlePanel("Test Map"),
 
-    fluidPage(
-      fluidRow(
-            column(9,
-               DT::dataTableOutput(ns('table'))
-        )
-      )
-    )
+    fillPage(leafletOutput(ns('map'), height = "100vh"))
+
   )
 }
 
@@ -30,20 +25,20 @@ mod_map_server <- function(id, filter_data){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
-    #specifies the cols to keep
-    column_order <- c("Resort", "Region", "Group", "State")
+    filtered_data <- reactive({filter_data$data})
 
-    output$table <- DT::renderDataTable({
-      filter_data %>% select(column_order)},
-      rownames = F,
-      options = list(
-        filter = FALSE,
-        paging = FALSE,
-        ordering = FALSE,
-        scrollY = "400px"
-      ),
-    )
-
+    output$map <- renderLeaflet({
+      leaflet(options = leafletOptions(zoomControl = FALSE)) %>%
+        addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png",
+                attribution = '©OpenStreetMap, ©CartoDB') %>%
+          setView(lng = -95.7129, lat = 37.0902, zoom = 4) %>%
+          addMarkers(
+            data = filtered_data(),
+            lat = ~Latitude,
+            lng = ~Longitude,
+            popup = ~Resort
+          )
+    })
   })
 }
 

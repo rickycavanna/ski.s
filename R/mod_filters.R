@@ -22,7 +22,7 @@ mod_filters_ui <- function(id){
                               multiple = TRUE,
                               options = list(placeholder = 'select a state name'))),
         column(9,
-          DT::dataTableOutput(ns('table'))
+          DT::dataTableOutput(ns('table'), height = "100vh")
         )
       )
     )
@@ -32,7 +32,7 @@ mod_filters_ui <- function(id){
 #' filters Server Functions
 #'
 #' @noRd
-mod_filters_server <- function(id, dataIN){
+mod_filters_server <- function(id, dataIN, filtered_data = filtered_data){
   moduleServer( id, function(input, output, session){
     ns <- session$ns
 
@@ -53,7 +53,7 @@ mod_filters_server <- function(id, dataIN){
                            choices = sort(unique(dataIN$State),))
     })
 
-    filtered_data <- reactive({
+    filtered <- reactive({
       if (length(input$state) > 0) {
         dataIN %>%
           filter(Region %in% input$region) %>%
@@ -70,18 +70,19 @@ mod_filters_server <- function(id, dataIN){
     column_order <- c("Resort", "Region", "Group", "State")
 
     output$table <- DT::renderDataTable({
-      filtered_data() %>% select(column_order)},
+      filtered() %>%
+        select(all_of(column_order))},
       rownames = F,
       options = list(
         filter = FALSE,
         paging = FALSE,
         ordering = FALSE,
-        scrollY = "400px"
+        scrollY = "450px"
         ),
       )
 
     observe({
-      filtered_data$data <- filtered_data()
+      filtered_data$data <- filtered()
     })
   })
 }
