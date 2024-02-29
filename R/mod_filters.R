@@ -79,6 +79,10 @@ mod_filters_server <- function(id, dataIN){
         scrollY = "400px"
         ),
       )
+
+    observe({
+      filtered_data$data <- filtered_data()
+    })
   })
 }
 

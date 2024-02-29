@@ -7,9 +7,10 @@
 app_server <- function(input, output, session) {
 
   resorts <- read.csv("data-raw/resort_info.csv")
+  filtered_data <- reactiveValues(data = NULL)
 
   # Your application server logic
   mod_filters_server("filters_1", dataIN = resorts)
-  mod_map_server("map_1")
+  mod_map_server("map_1", filter_data = filtered_data$data)
   mod_weather_server("weather_1")
 }
